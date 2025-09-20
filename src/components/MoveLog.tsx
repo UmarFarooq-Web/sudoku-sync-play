@@ -11,11 +11,6 @@ const MoveLog = () => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const movesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Auto-scroll to bottom when new moves arrive
-    movesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [moves]);
-
   const formatMoveDescription = (move: any) => {
     const playerName = move.profiles?.display_name || 'Unknown Player';
     const position = `(${move.row + 1}, ${move.col + 1})`;

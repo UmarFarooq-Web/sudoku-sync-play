@@ -31,6 +31,7 @@ const GameRoom = () => {
     const loadRoom = async () => {
       setLoading(true);
       const success = await joinRoom(roomId);
+      console.log(roomId)
       if (!success) {
         toast({
           title: "Error joining room",
@@ -44,13 +45,12 @@ const GameRoom = () => {
 
     loadRoom();
 
-    return () => {
-      leaveRoom();
-    };
+    // return () => {
+    //   leaveRoom();
+    // };
   }, [roomId, user, joinRoom, leaveRoom, navigate]);
 
   useEffect(() => {
-    // Check if puzzle is complete
     if (currentRoom && isPuzzleComplete(currentBoard)) {
       setShowCompletionModal(true);
     }
@@ -59,7 +59,6 @@ const GameRoom = () => {
   const handleCellChange = async (row: number, col: number, value: number | null) => {
     if (!currentRoom || !value) return;
 
-    // Don't allow changing puzzle cells
     const puzzleGrid = jsonToGrid(currentRoom.puzzle as Record<string, number | null>);
     if (puzzleGrid[row][col] !== null) {
       toast({
@@ -74,16 +73,16 @@ const GameRoom = () => {
     const solutionGrid = jsonToGrid(currentRoom.solution as Record<string, number | null>);
     const isValid = validateMove(solutionGrid, row, col, value);
     
-    if (!isValid) {
-      toast({
-        title: "Incorrect number",
-        description: `${value} is not correct for this position.`,
-        variant: "destructive"
-      });
-    }
+    // if (!isValid) {
+    //   toast({
+    //     title: "Incorrect number",
+    //     description: `${value} is not correct for this position.`,
+    //     variant: "destructive"
+    //   });
+    // }
 
     // Make the move (valid or invalid)
-    await makeMove(row, col, value);
+    await makeMove(row, col, value , isValid);
   };
 
   const handleLeaveRoom = () => {
@@ -176,7 +175,7 @@ const GameRoom = () => {
           </div>
 
           {/* Right Sidebar - Chat & Move Log */}
-          <div className="lg:col-span-6 grid grid-rows-2 gap-4 h-full">
+          <div className="lg:col-span-6 grid grid-rows-2 gap-4 h-full max-h-screen">
             {/* Chat Box */}
             <Card className="h-full">
               <ChatBox />

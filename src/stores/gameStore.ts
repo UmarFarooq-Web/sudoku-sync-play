@@ -48,21 +48,21 @@ interface GameState {
   rooms: Room[];
   currentRoom: Room | null;
   currentBoard: SudokuGrid;
-  
+
   // Game data
   moves: Move[];
   messages: Message[];
-  
+
   // Loading states
   loading: boolean;
-  
+
   // Actions
   fetchRooms: () => Promise<void>;
   joinRoom: (roomId: string, password?: string) => Promise<boolean>;
   leaveRoom: () => void;
-  makeMove: (row: number, col: number, value: number) => Promise<boolean>;
+  makeMove: (row: number, col: number, value: number , is_valid:boolean) => Promise<boolean>;
   sendMessage: (message: string) => Promise<void>;
-  
+
   // Realtime subscriptions
   subscribeToRoom: (roomId: string) => void;
   unsubscribeFromRoom: () => void;
@@ -76,94 +76,268 @@ export const useGameStore = create<GameState>((set, get) => ({
   messages: [],
   loading: false,
 
+
+
+
+  // fetchRooms: async () => {
+  //   set({ loading: true });
+  //   try {
+  //     const { data, error } = await supabase
+  //       .from('rooms')
+  //       .select(`
+  //         *,
+  //         profiles!rooms_host_id_fkey (display_name)
+  //       `)
+  //       .eq('is_completed', false)
+  //       .order('created_at', { ascending: false });
+
+  //     if (error) throw error;
+  //     set({ rooms: (data || []) as any[] });
+  //   } catch (error) {
+  //     console.error('Error fetching rooms:', error);
+  //   } finally {
+  //     set({ loading: false });
+  //   }
+  // },
+
   fetchRooms: async () => {
     set({ loading: true });
     try {
-      const { data, error } = await supabase
-        .from('rooms')
-        .select(`
-          *,
-          profiles!rooms_host_id_fkey (display_name)
-        `)
-        .eq('is_completed', false)
-        .order('created_at', { ascending: false });
+      // 1. Fetch rooms
+      const { data: data, error: error } = await supabase
+        .from("rooms")
+        .select("*")
+        .eq("is_completed", false)
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
-      set({ rooms: (data || []) as any[] });
+
+      // 2. Collect host ids
+      const hostIds = (data || []).map((r) => r.host_id).filter(Boolean);
+
+      // 3. Fetch profiles
+      const { data: profiles, error: profilesError } = await supabase
+        .from("profiles")
+        .select("user_id, display_name")
+        .in("user_id", hostIds);
+
+      if (profilesError) throw profilesError;
+
+      // 4. Merge rooms + profiles
+      const merged = (data || []).map((room) => ({
+        ...room,
+        profiles: profiles?.find((p) => p.user_id === room.host_id) || null,
+      }));
+
+      // 5. Save result
+      set({ rooms: (merged || []) as any[] });
     } catch (error) {
-      console.error('Error fetching rooms:', error);
+      console.error("Error fetching rooms:", error);
     } finally {
       set({ loading: false });
     }
   },
 
-  joinRoom: async (roomId: string, password?: string) => {
-    try {
-      // First, fetch the room
-      const { data: room, error: roomError } = await supabase
-        .from('rooms')
-        .select('*')
-        .eq('id', roomId)
-        .single();
 
-      if (roomError) throw roomError;
 
-      // Check password for private rooms
-      if (room.is_private && room.password && room.password !== password) {
-        return false;
-      }
 
-      // Fetch moves and messages
-      const [movesResponse, messagesResponse] = await Promise.all([
-        supabase
-          .from('moves')
-          .select(`
-            *,
-            profiles!moves_player_id_fkey (display_name)
-          `)
-          .eq('room_id', roomId)
-          .order('created_at', { ascending: true }),
-        
-        supabase
-          .from('messages')
-          .select(`
-            *,
-            profiles!messages_player_id_fkey (display_name)
-          `)
-          .eq('room_id', roomId)
-          .order('created_at', { ascending: true })
-      ]);
 
-      if (movesResponse.error) throw movesResponse.error;
-      if (messagesResponse.error) throw messagesResponse.error;
 
-      // Build current board from moves
-      const puzzleGrid = jsonToGrid(room.puzzle as Record<string, number | null>);
-      const currentBoard = puzzleGrid.map(row => [...row]);
-      
-      movesResponse.data?.forEach(move => {
-        if (move.is_valid) {
-          currentBoard[move.row][move.col] = move.value;
-        }
-      });
 
-      set({
-        currentRoom: room as Room,
-        currentBoard,
-        moves: (movesResponse.data || []) as any[],
-        messages: (messagesResponse.data || []) as any[]
-      });
 
-      // Subscribe to realtime updates
-      get().subscribeToRoom(roomId);
-      
-      return true;
-    } catch (error) {
-      console.error('Error joining room:', error);
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // joinRoom: async (roomId: string, password?: string) => {
+  //   try {
+  //     // First, fetch the room
+  //     const { data: room, error: roomError } = await supabase
+  //       .from('rooms')
+  //       .select('*')
+  //       .eq('id', roomId)
+  //       .single();
+
+  //     if (roomError) throw roomError;
+
+  //     // Check password for private rooms
+  //     if (room.is_private && room.password && room.password !== password) {
+  //       return false;
+  //     }
+
+  //     // Fetch moves and messages
+  //     const [movesResponse, messagesResponse] = await Promise.all([
+  //       supabase
+  //         .from('moves')
+  //         .select(`
+  //           *,
+  //           profiles!moves_player_id_fkey (display_name)
+  //         `)
+  //         .eq('room_id', roomId)
+  //         .order('created_at', { ascending: true }),
+
+  //       supabase
+  //         .from('messages')
+  //         .select(`
+  //           *,
+  //           profiles!messages_player_id_fkey (display_name)
+  //         `)
+  //         .eq('room_id', roomId)
+  //         .order('created_at', { ascending: true })
+  //     ]);
+
+  //     if (movesResponse.error) throw movesResponse.error;
+  //     if (messagesResponse.error) throw messagesResponse.error;
+
+  //     // Build current board from moves
+  //     const puzzleGrid = jsonToGrid(room.puzzle as Record<string, number | null>);
+  //     const currentBoard = puzzleGrid.map(row => [...row]);
+
+  //     movesResponse.data?.forEach(move => {
+  //       if (move.is_valid) {
+  //         currentBoard[move.row][move.col] = move.value;
+  //       }
+  //     });
+
+  //     set({
+  //       currentRoom: room as Room,
+  //       currentBoard,
+  //       moves: (movesResponse.data || []) as any[],
+  //       messages: (messagesResponse.data || []) as any[]
+  //     });
+
+  //     // Subscribe to realtime updates
+  //     get().subscribeToRoom(roomId);
+
+  //     return true;
+  //   } catch (error) {
+  //     console.error('Error joining room:', error);
+  //     return false;
+  //   }
+  // },
+
+
+
+
+
+
+
+
+
+
+
+joinRoom: async (roomId: string, password?: string) => {
+  try {
+    // 1. Fetch the room
+    const { data: room, error: roomError } = await supabase
+      .from("rooms")
+      .select("*")
+      .eq("id", roomId)
+      .single();
+
+    if (roomError) throw roomError;
+    
+    // 2. Check password for private rooms
+    if (room.is_private && room.password && room.password !== password) {
       return false;
     }
-  },
+    
+    // 3. Fetch moves and messages (without join)
+    const [movesResponse, messagesResponse] = await Promise.all([
+      supabase
+        .from("moves")
+        .select("*")
+        .eq("room_id", roomId)
+        .order("created_at", { ascending: true }),
 
+      supabase
+      .from("messages")
+      .select("*")
+      .eq("room_id", roomId)
+      .order("created_at", { ascending: true }),
+    ]);
+    
+    if (movesResponse.error) throw movesResponse.error;
+    if (messagesResponse.error) throw messagesResponse.error;
+    
+    // 4. Collect player_ids from moves + messages
+    const movePlayerIds = movesResponse.data?.map((m) => m.player_id).filter(Boolean) || [];
+    const messagePlayerIds = messagesResponse.data?.map((m) => m.player_id).filter(Boolean) || [];
+    const allPlayerIds = Array.from(new Set([...movePlayerIds, ...messagePlayerIds]));
+    
+    // 5. Fetch matching profiles
+    const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("user_id, display_name")
+    .in("user_id", allPlayerIds);
+    
+    if (profilesError) throw profilesError;
+
+    
+    // 6. Merge profiles into moves + messages
+    const mergedMoves = (movesResponse.data || []).map((move) => ({
+      ...move,
+      profiles: profiles?.find((p) => p.user_id === move.player_id) || null,
+    }));
+    
+    const mergedMessages = (messagesResponse.data || []).map((msg) => ({
+      ...msg,
+      profiles: profiles?.find((p) => p.user_id === msg.player_id) || null,
+    }));
+    
+    // console.log("MM , MP" , mergedMessages , mergedMoves)
+    // 7. Build current board from moves
+    const puzzleGrid = jsonToGrid(room.puzzle as Record<string, number | null>);
+    const currentBoard = puzzleGrid.map((row) => [...row]);
+
+    mergedMoves.forEach((move) => {
+      if (move.is_valid || true) {
+        currentBoard[move.row][move.col] = move.value;
+      }
+    });
+    
+    // 8. Save state
+    set({
+      currentRoom: room as Room,
+      currentBoard,
+      moves: mergedMoves as any[],
+      messages: mergedMessages as any[],
+    });
+    
+    // 9. Subscribe to realtime updates
+    get().subscribeToRoom(roomId);
+
+    return true;
+  } catch (error) {
+    console.error("Error joining room:", error);
+    return false;
+  }
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   leaveRoom: () => {
     get().unsubscribeFromRoom();
     set({
@@ -174,7 +348,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     });
   },
 
-  makeMove: async (row: number, col: number, value: number) => {
+  makeMove: async (row: number, col: number, value: number , is_valid:boolean) => {
     const { currentRoom, currentBoard } = get();
     if (!currentRoom) return false;
 
@@ -191,18 +365,22 @@ export const useGameStore = create<GameState>((set, get) => ({
           player_id: (await supabase.auth.getUser()).data.user?.id,
           row,
           col,
-          value
+          value,
+          is_valid
         });
 
       if (error) throw error;
       return true;
     } catch (error) {
       console.error('Error making move:', error);
-      // Revert optimistic update
       set({ currentBoard });
       return false;
     }
   },
+
+
+
+  
 
   sendMessage: async (message: string) => {
     const { currentRoom } = get();
@@ -236,17 +414,17 @@ export const useGameStore = create<GameState>((set, get) => ({
           const { moves, currentBoard, currentRoom } = get();
           const solutionGrid = jsonToGrid(currentRoom!.solution as Record<string, number | null>);
           const isValid = solutionGrid[newMove.row][newMove.col] === newMove.value;
-          
+
           // Update move validity
           newMove.is_valid = isValid;
-          
+
           // Update board if valid
-          if (isValid) {
+          // if (isValid) {
             const newBoard = currentBoard.map(r => [...r]);
             newBoard[newMove.row][newMove.col] = newMove.value;
             set({ currentBoard: newBoard });
-          }
-          
+          // }
+
           set({ moves: [...moves, newMove] });
         }
       })
