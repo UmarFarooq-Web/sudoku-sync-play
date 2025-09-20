@@ -14,7 +14,151 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      messages: {
+        Row: {
+          created_at: string | null
+          id: number
+          message: string
+          player_id: string | null
+          room_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          message: string
+          player_id?: string | null
+          room_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          message?: string
+          player_id?: string | null
+          room_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      moves: {
+        Row: {
+          col: number
+          created_at: string | null
+          id: number
+          is_valid: boolean | null
+          player_id: string | null
+          room_id: string | null
+          row: number
+          value: number
+        }
+        Insert: {
+          col: number
+          created_at?: string | null
+          id?: never
+          is_valid?: boolean | null
+          player_id?: string | null
+          room_id?: string | null
+          row: number
+          value: number
+        }
+        Update: {
+          col?: number
+          created_at?: string | null
+          id?: never
+          is_valid?: boolean | null
+          player_id?: string | null
+          room_id?: string | null
+          row?: number
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moves_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      rooms: {
+        Row: {
+          created_at: string | null
+          current_board: Json
+          difficulty: string | null
+          host_id: string | null
+          id: string
+          is_completed: boolean | null
+          is_private: boolean | null
+          name: string
+          password: string | null
+          puzzle: Json
+          solution: Json
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_board?: Json
+          difficulty?: string | null
+          host_id?: string | null
+          id?: string
+          is_completed?: boolean | null
+          is_private?: boolean | null
+          name: string
+          password?: string | null
+          puzzle: Json
+          solution: Json
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_board?: Json
+          difficulty?: string | null
+          host_id?: string | null
+          id?: string
+          is_completed?: boolean | null
+          is_private?: boolean | null
+          name?: string
+          password?: string | null
+          puzzle?: Json
+          solution?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
