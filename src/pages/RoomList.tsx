@@ -174,12 +174,12 @@ const RoomList = () => {
               </div>
               
               <div className="flex items-center space-x-2">
-                <Switch
+                {/*<Switch
                   id="private-room"
                   checked={isPrivate}
                   onCheckedChange={setIsPrivate}
                 />
-                <Label htmlFor="private-room">Private Room</Label>
+                <Label htmlFor="private-room">Private Room</Label>*/}
               </div>
               
               {isPrivate && (
