@@ -1,73 +1,109 @@
-# Welcome to your Lovable project
+# 🧩 Multiplayer Sudoku Game  
 
-## Project info
+A real-time **Multiplayer Sudoku Game** built with **React** where players can create public rooms, chat, and play Sudoku together at different difficulty levels.  
 
-**URL**: https://lovable.dev/projects/229e391f-78de-4848-b9f8-92fb8a3d2503
+---
 
-## How can I edit this code?
+## 🚀 Features  
 
-There are several ways of editing your application.
+- 🔹 Create & join **public rooms** with friends or random players  
+- 🔹 Real-time **chat system** to interact with other players  
+- 🔹 Live, synchronized **game board** for collaborative or competitive play  
+- 🔹 Activity **log system** to track moves and updates  
+- 🔹 **3 levels of difficulty** (Easy, Medium, Hard)  
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/229e391f-78de-4848-b9f8-92fb8a3d2503) and start prompting.
+## 📸 Screenshots  
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🏠 Home Page  
+<img width="1917" height="977" alt="Screenshot 2025-09-22 014547" src="https://github.com/user-attachments/assets/8847cb7a-f639-41c1-9597-8db3203bfb38" />
 
-**Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 🎮 Game Page  
+<img width="1895" height="981" alt="Screenshot 2025-09-22 014841" src="https://github.com/user-attachments/assets/2277787b-19db-4aa7-899c-4549fa5712da" />
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 🔐 Login Page  
+<img width="1915" height="985" alt="Screenshot 2025-09-22 014734" src="https://github.com/user-attachments/assets/e4c5b946-936b-4c15-8829-0df9d72e58bc" />
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🛠️ Tech Stack  
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **Frontend:** React, TailwindCSS  
+- **Backend / Realtime:** (Your backend setup here, e.g., Supabase / WebSockets / Node.js)  
+- **State Management:** React Hooks, Context API  
+- **Deployment:** (e.g., Vercel / Netlify)  
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+## 📚 What I Learned  
+
+- Implementing **real-time features** in a web application  
+- Synchronizing **multiplayer game state** across clients  
+- Designing scalable **game logic** in React  
+- Handling **edge cases & debugging real-time updates**  
+- Improving overall **UI/UX** for interactive apps  
+
+---
+
+## ⚡ Challenges I Faced  
+
+- Ensuring **smooth updates** across players without duplication  
+- Building a reliable **room creation & joining** system  
+- Debugging **sync issues** when one player’s move wasn’t reflected instantly  
+- Balancing Sudoku logic with **performance optimization**  
+
+---
+
+## 🖥️ Getting Started  
+
+Follow these steps to run the project locally:  
+
+```bash
+# Clone the repo
+git clone https://github.com/your-username/multiplayer-sudoku.git
+
+# Navigate into the project
+cd multiplayer-sudoku
+
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Your app will be available at:  
+👉 [http://localhost:5173](http://localhost:8080) (Vite default port)  
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🌍 Live Demo  
+🔗 [Click here to play](https://multiplayer-sudoku.netlify.app/)  
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 📂 Repository  
+🔗 [GitHub Repo](https://github.com/UmarFarooq-Web/sudoku-sync-play) 
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 🤝 Contributing  
+Contributions, issues, and feature requests are welcome!  
+Feel free to fork this repo and submit a pull request.  
 
-Simply open [Lovable](https://lovable.dev/projects/229e391f-78de-4848-b9f8-92fb8a3d2503) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 📜 License  
+This project is licensed under the **MIT License** – feel free to use it and improve upon it.  
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 👨‍💻 Author  
+**Umar Farooq**  
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- 🌐 [LinkedIn](https://www.linkedin.com/in/umar-farooq-329947371/)  
+- 💻 [Portfolio](https://umarfarooq-dev-portfolio.netlify.app/)  
+
